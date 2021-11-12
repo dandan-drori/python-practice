@@ -7,11 +7,9 @@ def get_random_word(size):
   word_site = "https://www.mit.edu/~ecprice/wordlist.10000"
   response = requests.get(word_site)
   words = response.content.splitlines()
-  randIdx = math.floor(random.random()*size)
-  word = words[randIdx]
+  word = random.choice(words)
   while len(word) < 5:
-    randIdx = math.floor(random.random()*size)
-    word = words[randIdx]
+    word = random.choice(words)
   return word
 
 def get_underscores(word, guessed_letters):
@@ -28,9 +26,9 @@ def draw_hangman(word, guessed_letters):
   for letter in guessed_letters:
     if letter not in word:
       wrong_guesses += 1
-  print('Remaining Guesses: ' + str(7 - wrong_guesses))
-  print(display_hangman(7 - wrong_guesses))
-  if wrong_guesses >= 7:
+  print('Remaining Mistakes: ' + str(6 - wrong_guesses))
+  print(display_hangman(6 - wrong_guesses))
+  if wrong_guesses >= 6:
     return 'LOSE'
 
 def get_letter(word, guessed_letters):
@@ -147,6 +145,11 @@ def main():
   print(get_underscores(word, guessed_letters))
   while not game_over:
     letter = get_letter(word, guessed_letters)
-    game_over = is_game_over(letter, word, guessed_letters)
+    done = is_game_over(letter, word, guessed_letters)
+    if done:
+      print('The word was: ' + word)
+      while input("Play Again? (Y/N) ").upper() == "Y":
+        main()
+      game_over = True
   
 main()
