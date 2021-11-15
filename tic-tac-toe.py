@@ -1,6 +1,22 @@
 import random
 import re
 
+score = {
+  'X': 0,
+  'O': 0,
+}
+
+class clrs:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m' 
+
 def get_empty_board():
   return [
     ['1', '2', '3'],
@@ -14,12 +30,29 @@ def print_board(board):
     for j in range(3):
       cell = board[i][j]
       if cell == 'X' or cell == 'O':
-        b[i][j] = cell.replace("'", "")
+        b[i][j] = cell
       else:
         b[i][j] = int(board[i][j])
-  print('- - - - - - - - - -')
-  print(str(b[0]) + '\n' + str(b[1]) + '\n' + str(b[2]))
-  print('- - - - - - - - - -')
+  for i in range(3):
+    for j in range(3):
+      if b[i][j] == 'X':
+        if j == 2:
+          print(clrs.WARNING + b[i][j] + clrs.ENDC, end='')
+        else:
+          print(clrs.WARNING + b[i][j] + clrs.ENDC + ' | ', end='')
+      elif b[i][j] == 'O':
+        if j == 2:
+          print(clrs.FAIL + b[i][j] + clrs.ENDC, end='')
+        else:
+          print(clrs.FAIL + b[i][j] + clrs.ENDC + ' | ', end='')
+      else:
+        print(b[i][j], end='')
+        if j < 2:
+          print(' | ', end='')
+    if i < 2:
+      print('\n-   -   -')
+    else:
+      print('\n')
 
 def is_game_over(board):
   regex = re.compile('[0-9]')
@@ -66,7 +99,7 @@ def player_move(board):
   return board
       
 def computer_move(board):
-  print_board(board)
+  #print_board(board)
   empty_cells = get_empty_cells(board)
   if not len(empty_cells):
     return False
@@ -84,7 +117,14 @@ def get_other_player(turn):
     return 'X'
   else:
     return 'Draw'
-    
+
+def print_score():
+  print('score - X : ', end='')
+  print(score['X'], end='')
+  print(' | ', end='')
+  print('O : ', end='')
+  print(score['O'])
+
 def main():
   board = get_empty_board()
   game_over = False
@@ -102,7 +142,10 @@ def main():
     done = is_game_over(board)
     if done:
       print_board(board)
-      print(get_other_player(turn) + ' has won!')
+      winner = get_other_player(turn)
+      print(winner + ' has won!')
+      score[winner] += 1
+      print_score()
       while input('Play Again? Y/N ').upper() == 'Y':
         main()
       game_over = True
