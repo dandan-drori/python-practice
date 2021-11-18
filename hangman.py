@@ -22,13 +22,14 @@ def get_underscores(word, guessed_letters):
   return underscores
 
 def draw_hangman(word, guessed_letters):
+  stages_max_idx = 7
   wrong_guesses = 0
   for letter in guessed_letters:
     if letter not in word:
       wrong_guesses += 1
-  print('Remaining Mistakes: ' + str(6 - wrong_guesses))
-  print(display_hangman(6 - wrong_guesses))
-  if wrong_guesses >= 6:
+  print('Remaining Mistakes: ' + str(stages_max_idx - wrong_guesses))
+  print(display_hangman(stages_max_idx - wrong_guesses))
+  if wrong_guesses >= stages_max_idx:
     return 'LOSE'
 
 def get_letter(word, guessed_letters):
@@ -124,7 +125,7 @@ def display_hangman(tries):
                    |     
                    -
                 """,
-                # initial empty state
+                # hook
                 """
                    --------
                    |      |
@@ -132,6 +133,16 @@ def display_hangman(tries):
                    |    
                    |      
                    |     
+                   -
+                """,
+                # initial empty state
+                """
+                   --------
+                   |
+                   |
+                   |
+                   |
+                   |
                    -
                 """
     ]

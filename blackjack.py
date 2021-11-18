@@ -1,9 +1,9 @@
 import random
 
 picture_cards = {
-  'J': 11,
-  'Q': 12,
-  'K': 13,
+  'J': 10,
+  'Q': 10,
+  'K': 10,
 }
 
 class Deck:
@@ -63,10 +63,12 @@ class Player:
       return True
 
 class Dealer(Player):
+  deck = {}
+  cards = []
+
   def __init__(self, deck):
     self.deck = deck
     self.draw_cards(2)
-    super().__init__(deck)
 
   def show_cards(self):
     if len(self.cards) == 2:
@@ -78,11 +80,27 @@ class Dealer(Player):
       print(self.cards)
 
 def end_game(winner, dealer, player):
-  print('Game Over')
-  print('Winner: ' + winner)
-  print('Dealer count: ' + str(dealer.get_sum()))
-  print('Your count: ' + str(player.get_sum()))
-  return False
+  dealer_count = dealer.get_sum()
+  player_count = player.get_sum()
+  is_win = False
+  if dealer_count > player_count and dealer_count <= 21:
+    winner = 'Dealer'
+    is_win = True
+  elif player_count > dealer_count and player_count <= 21:
+    winner = 'Player'
+    is_win = True
+  if dealer.is_lose():
+    winner = 'Player'
+    is_win = True
+  elif player.is_lose():
+    winner = 'Dealer'
+    is_win = True
+  if is_win:
+    print('Game Over')
+    print('Winner: ' + winner)
+    print('Dealer count: ' + str(dealer_count))
+    print('Your count: ' + str(player_count))
+  return is_win
 
 def main():
   game_over = False
@@ -100,7 +118,19 @@ def main():
       dealer.draw_cards(1)
       if dealer.is_lose():
         game_over = end_game('Player', dealer, player)
+      dealer.show_cards()
+      player.show_cards()
     else:
       dealer.draw_cards(1)
+      game_over = end_game('Player', dealer, player)
+      print(game_over)
+      if game_over:
+        return
+      while not dealer.is_lose() and player.get_sum() > dealer.get_sum() and not player.is_lose():
+        game_over = end_game('Player', dealer, player)
+        if not game_over:
+          dealer.draw_cards(1)
+      dealer.show_cards()
+      player.show_cards()
 
 main()
